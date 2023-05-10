@@ -1,15 +1,17 @@
+import { Field, Form, FormRenderProps } from 'react-final-form';
+import { Form as UIForm } from 'semantic-ui-react';
 import './App.css';
-import { Form, Field, FormRenderProps } from 'react-final-form';
-import { Button, Form as UIForm } from 'semantic-ui-react';
 
 interface User {
-  firstName: string;
-  lastName: string;
+  email: string;
+  name: string;
 }
 
-const initialValues: User = { firstName: '', lastName: '' };
+const initialValues: User = { name: '', email: '' };
 
 const required = (value: unknown) => (value ? undefined : 'Required');
+const validEmail = (value: string) =>
+  /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i.test(value);
 
 function App() {
   const onSubmit = (values: Record<string, string>, form: unknown) => {
@@ -26,39 +28,42 @@ function App() {
           onSubmit={onSubmit}
           initialValues={initialValues}
           render={({ handleSubmit, form, pristine }: FormRenderProps) => (
-            <UIForm className="form-container" onSubmit={handleSubmit}>
-              <Field name="firstName" validate={required}>
+            <form className="form-container" onSubmit={handleSubmit}>
+              <Field name="email" validate={validEmail}>
                 {({ input, meta }) => (
-                  <div>
-                    <label className="label">First Name</label>
-                    <UIForm.Input
+                  <div className="form-control">
+                    <label className="label">Email</label>
+                    <input {...input} placeholder="Email"></input>
+                    {/* // ? Controlled form input */}
+                    {/* <UIForm.Input
                       {...input}
                       type="text"
                       placeholder="Last Name"
-                    />
+                    /> */}
                     {meta.error && meta.touched && (
                       <span className="error">{meta.error}</span>
                     )}
                   </div>
                 )}
               </Field>
-              <div>
-                <label className="label">Last Name</label>
+              <div className="form-control">
+                <label className="label">Name</label>
                 <Field
-                  name="lastName"
-                  placeholder="Last Name"
+                  name="name"
+                  placeholder="Name"
                   component="input"
+                  validate={required}
                 />
               </div>
               <div className="buttons">
-                <Button type="submit" disabled={pristine}>
+                <button type="submit" disabled={pristine}>
                   Submit
-                </Button>
-                <Button type="button" onClick={form.reset} disabled={pristine}>
+                </button>
+                <button type="button" onClick={form.reset} disabled={pristine}>
                   Reset
-                </Button>
+                </button>
               </div>
-            </UIForm>
+            </form>
           )}
         />
       </section>
