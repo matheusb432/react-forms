@@ -1,5 +1,6 @@
 import './App.css';
 import { Form, Field, FormRenderProps } from 'react-final-form';
+import { Button, Form as UIForm } from 'semantic-ui-react';
 
 interface User {
   firstName: string;
@@ -8,15 +9,12 @@ interface User {
 
 const initialValues: User = { firstName: '', lastName: '' };
 
+const required = (value: unknown) => (value ? undefined : 'Required');
+
 function App() {
-  const onSubmit = (
-    values: Record<string, string>,
-    form: unknown,
-    callback: unknown
-  ) => {
+  const onSubmit = (values: Record<string, string>, form: unknown) => {
     console.log(values);
     console.log(form);
-    console.log(callback);
   };
 
   return (
@@ -27,44 +25,40 @@ function App() {
         <Form
           onSubmit={onSubmit}
           initialValues={initialValues}
-          render={({
-            handleSubmit,
-            form,
-            submitting,
-            pristine,
-            values,
-          }: FormRenderProps) => (
-            <form className="form-container" onSubmit={handleSubmit}>
+          render={({ handleSubmit, form, pristine }: FormRenderProps) => (
+            <UIForm className="form-container" onSubmit={handleSubmit}>
+              <Field name="firstName" validate={required}>
+                {({ input, meta }) => (
+                  <div>
+                    <label className="label">First Name</label>
+                    <UIForm.Input
+                      {...input}
+                      type="text"
+                      placeholder="Last Name"
+                    />
+                    {meta.error && meta.touched && (
+                      <span className="error">{meta.error}</span>
+                    )}
+                  </div>
+                )}
+              </Field>
               <div>
-                <label>First Name</label>
-                <Field
-                  name="firstName"
-                  component="input"
-                  type="text"
-                  placeholder="First Name"
-                />
-              </div>
-              <div>
-                <label>Last Name</label>
+                <label className="label">Last Name</label>
                 <Field
                   name="lastName"
-                  component="input"
-                  type="text"
                   placeholder="Last Name"
+                  component="input"
                 />
               </div>
               <div className="buttons">
-                <button type="submit" disabled={submitting || pristine}>
+                <Button type="submit" disabled={pristine}>
                   Submit
-                </button>
-                <button
-                  type="button"
-                  onClick={form.reset}
-                  disabled={submitting || pristine}>
+                </Button>
+                <Button type="button" onClick={form.reset} disabled={pristine}>
                   Reset
-                </button>
+                </Button>
               </div>
-            </form>
+            </UIForm>
           )}
         />
       </section>
