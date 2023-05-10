@@ -1,12 +1,13 @@
-import { Button } from 'semantic-ui-react';
+import { Button, Form } from 'semantic-ui-react';
 import './App.css';
+import { Formik, FormikErrors } from 'formik';
 
 interface User {
-  firstName: string;
-  lastName: string;
+  name: string;
+  email: string;
 }
 
-const initialValues: User = { firstName: '', lastName: '' };
+const initialValues: User = { name: '', email: '' };
 
 function App() {
   return (
@@ -14,14 +15,69 @@ function App() {
       <section className="page-container">
         <h1 className="title">Formik</h1>
 
-        <div>
-          <label className="label">Last Name</label>
-          {/* <Field name="lastName" placeholder="Last Name" component="input" /> */}
-        </div>
-        <div className="buttons">
-          <Button type="submit">Submit</Button>
-          <Button type="button">Reset</Button>
-        </div>
+        <Formik
+          initialValues={initialValues}
+          validate={(values) => {
+            const errors: FormikErrors<User> = {};
+            if (!values.email) {
+              errors.email = 'Required';
+            } else if (
+              !/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i.test(values.email)
+            ) {
+              errors.email = 'Invalid email address';
+            }
+            return errors;
+          }}
+          onSubmit={(values, { setSubmitting }) => {
+            setTimeout(() => {
+              alert(JSON.stringify(values, null, 2));
+              setSubmitting(false);
+            }, 400);
+          }}>
+          {({
+            values,
+            errors,
+            touched,
+            handleChange,
+            handleBlur,
+            handleSubmit,
+            isSubmitting,
+          }) => (
+            <form onSubmit={handleSubmit}>
+              <div>
+                <label className="label">Email</label>
+                <Form.Input
+                  type="email"
+                  name="email"
+                  value={values.email}
+                  onChange={handleChange}
+                  onBlur={handleBlur}
+                />
+                {errors.email && touched.email && (
+                  <span className="error"> {errors.email}</span>
+                )}
+              </div>
+              <div>
+                <label className="label">Name</label>
+                <Form.Input
+                  type="name"
+                  name="name"
+                  value={values.name}
+                  onChange={handleChange}
+                  onBlur={handleBlur}
+                />
+              </div>
+              <div className="buttons">
+                <Button type="submit" disabled={isSubmitting || !!errors.email}>
+                  Submit
+                </Button>
+                <Button type="button" disabled={isSubmitting}>
+                  Reset
+                </Button>
+              </div>
+            </form>
+          )}
+        </Formik>
       </section>
     </main>
   );
