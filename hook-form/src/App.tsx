@@ -1,6 +1,5 @@
-import { Button, Form } from 'semantic-ui-react';
-import './App.css';
 import { UseFormProps, useForm } from 'react-hook-form';
+import './App.css';
 
 interface User {
   name: string;
@@ -31,13 +30,12 @@ function App() {
     reset(initialValues);
   };
 
-  // ? Subscribe to individual fields
-  // const email = watch(['email']);
+  // ? Subscribing to individual fields or the entire form
+  const email = watch(['email']);
   const form = watch();
 
+  console.log(email);
   console.log(form);
-
-  // console.log(email);
 
   return (
     <main className="container">
